@@ -1,0 +1,47 @@
+---
+interface Props {
+  name: string
+  url: string
+  isBig?: boolean
+}
+
+const {name, url, isBig=false} = Astro.props
+// To get the id from the url
+const id = url.split("/").at(-2)
+const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+---
+
+<!-- to aply a conditionated style by using isBig prop -->
+
+<!-- Method 1 it isn't best practice-->
+<!-- class={`rounded-lg flex flex-col justify-center items-center p-2 my-4 ${!isBig && 'border'}`} -->
+ 
+<!-- Method 2 it's best practice -->
+<a href={`/pokemons/${name}`}
+  class:list={[
+    `rounded-lg flex flex-col justify-center items-center p-2 my-4 `,
+    {
+      border: !isBig
+    }
+  ]}>
+
+  <img src={imageSrc} alt="pokemonImg"
+  transition:name={`${name}-image`} 
+  class:list={[
+    {
+      'w-80 h-auto': isBig
+    },
+    {
+      'w-40 h-40': !isBig
+    }
+  ]}
+  >
+
+  <span
+   class:list={[
+    'capitalize text-slate-100',
+    {
+      'text-4xl font-semibold': isBig
+    }
+  ]}> #{id} - {name}</span>
+</a>

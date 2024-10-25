@@ -1,0 +1,21 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+
+// server only
+const name = "Diego"; 
+---
+
+<MainLayout title="Home">
+	<h1 class="text-3xl font-extrabold text-slate-800 mb-5">Wellcome: {name}</h1>
+	
+	<p>Momento real: {new Date().toLocaleTimeString()}</p>
+	<p id="real-time"></p>
+</MainLayout>
+
+<script>
+	// client only	
+
+	const realTime = document.querySelector("#real-time") as HTMLParagraphElement;
+	realTime.innerText = `Momento real: ${new Date().toLocaleTimeString()}`
+
+</script>
