@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import type { PokemonListResponse } from "@/interfaces/pokemon-response";
 
 import MainLayout from "@/layouts/MainLayout.astro";
-import PokemonCard  from "../../components/pokemons/PokemonCard.astro";
+import PokemonCard  from "@/components/pokemons/PokemonCard.astro";
 
 
 //  This function is used to generate static pages for each pokemon in the list it's called SSG (Static Site Generation).
@@ -31,9 +31,15 @@ const {url} = Astro.props
 
 const id = url.split('/').at(-2)
 const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`
+const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+
 ---
 
-<MainLayout title="Ramdom pokemon" >
+<MainLayout 
+    title=`Pokemon - #${id} - ${name}`
+    description=`Pokemon description ${name}`
+    image={imageSrc}
+     >
   <section class="p-10 flex flex-col items-center justify-center ">
     <div class="space-y-4">
       <a class="bg-slate-100 p-2 rounded-lg hover:bg-emerald-400 hover:ease-in hover:duration-300" href="/">Back to home</a>

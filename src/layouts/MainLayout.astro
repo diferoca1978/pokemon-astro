@@ -1,8 +1,16 @@
 ---
+import { ViewTransitions } from "astro:transitions";
 import Navbar from "@/components/Navbar.astro";
 import Footernav from "@/components/Footernav.astro";
-import { ViewTransitions } from "astro:transitions";
-const { title } = Astro.props;
+import { siteInfo } from "@/const/site-info";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title= siteInfo.title, description = siteInfo.description, image } = Astro.props;
 ---
 
 <html lang="en">
@@ -12,6 +20,17 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
+    <!-- SEO -->
+    <meta name="description" content={description} />
+    <meta name="author" content="Diego Rodriguez" />
+    
+    <!-- Open Graph Tags -->
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
     <ViewTransitions />
   </head>
   <body class="bg-slate-800">
