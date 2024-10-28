@@ -1,5 +1,6 @@
 ---
-import { ViewTransitions } from "astro:transitions";
+import {ClientRouter} from "astro:transitions";
+
 import Navbar from "@/components/Navbar.astro";
 import Footernav from "@/components/Footernav.astro";
 import { siteInfo } from "@/const/site-info";
@@ -31,7 +32,7 @@ const { title= siteInfo.title, description = siteInfo.description, image } = Ast
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
 
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body class="bg-slate-800">
     <Navbar/>
