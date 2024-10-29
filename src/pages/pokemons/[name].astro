@@ -1,58 +1,159 @@
 ---
 import type { GetStaticPaths } from "astro";
+
 import type { PokemonListResponse } from "@/interfaces/pokemon-response";
 
 import MainLayout from "@/layouts/MainLayout.astro";
-import PokemonCard  from "@/components/pokemons/PokemonCard.astro";
-
+import Title from "@/shared/Title.astro";
+import PokemonCard from "@/components/pokemons/PokemonCard.astro";
+import { Icon } from "astro-icon/components";
 
 //  This function is used to generate static pages for each pokemon in the list it's called SSG (Static Site Generation).
 //  It return an array of objects with the pokemon name and url.
-export const getStaticPaths = (async() => {
-  
-  const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
-  const { results } = (await resp.json()) as PokemonListResponse  
-  
-  return results.map(({name, url}) => ({
+export const getStaticPaths = (async () => {
+  const resp = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+  const { results } = (await resp.json()) as PokemonListResponse;
+
+  return results.map(({ name, url }) => ({
     params: { name: name },
-    props: { name: name, url: url }
-  }))
+    props: { name: name, url: url },
+  }));
 
   // return [
   //   { params: { name: "bulbasaur"}, props: { name: "bulbasaur" ,url: "https://pokeapi.co/api/v2/pokemon/1/" } },
   //   { params: { name: "charmander" }, props: { name: "charmander" ,url: "https://pokeapi.co/api/v2/pokemon/4/" } },
   // ];
-
 }) satisfies GetStaticPaths;
 
-const { name } = Astro.params
-const {url} = Astro.props
+const { name } = Astro.params;
+const { url } = Astro.props;
 
-
-const id = url.split('/').at(-2)
-const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`
-const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-
+const id = url.split("/").at(-2);
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 ---
 
-<MainLayout 
-    title=`Pokemon - #${id} - ${name}`
-    description=`Pokemon description ${name}`
-    image={imageSrc}
-     >
-  <section class="p-10 flex flex-col items-center justify-center ">
-    <div class="space-y-4">
-      <a class="bg-slate-100 p-2 rounded-lg hover:bg-emerald-400 hover:ease-in hover:duration-300" href="/">Back to home</a>
-      <h1 class="text-slate-100 capitalize text-5xl">{name}</h1>
+<MainLayout
+  title=`Pokemon - #${id} - ${name}`
+  description=`Pokemon description ${name}`
+  image={imageSrc}
+>
+  <section class="p-10 flex flex-col items-center justify-center text-center">
+    <div class="flex flex-row">
+      <div>
+        <button
+          onclick="history.back()"
+          class="bg-slate-100 p-2 rounded-lg hover:bg-emerald-400 hover:ease-in hover:duration-300"
+        >
+          Back</button
+        >
+        <Title>{name}</Title>
+      </div>
+      <div>
+        <!-- Adding data atributes to the button to take them after into the script.
+             Adding gata atributes to the icons to take them after into the script.
+        -->
+        <button
+          id="like-button"
+          class="ml-4 hover:animate-pulse hover:scale-110 hover:ease-in duration-300"
+          data-name={name}
+          data-id={id}
+        >
+          <Icon
+            data-full
+            name="heart-fullfill"
+            size={50}
+            color="red"
+            class="hidden"
+          />
+          <Icon data-outline name="heart-outline" size={50} color="red" />
+        </button>
+      </div>
     </div>
-    
-    <!-- to aply a custom style by using isBig prop from PokemonCard -->
-    <PokemonCard name={name ?? ''} url={url} isBig={true} /> 
 
-    <audio controls class=" mt-5" >
-      <source src={audioSrc} type="audio/ogg">
+    <!-- to aply a custom style by using isBig prop from PokemonCard -->
+
+    <PokemonCard name={name ?? ""} url={url} isBig={true} />
+
+    <audio controls class="mt-5">
+      <source src={audioSrc} type="audio/ogg" />
       Your browser does not support the audio element.
     </audio>
   </section>
-
 </MainLayout>
+
+<!-- Into our script we can create interfaces for typescript.
+     We use the dataset object of javaScript to get the data from the button.
+     To avoid the problem that does not allow us use the script when we use another page, we can bundle the logic of the script in the 
+     document.addEventListener() function and use an astro special events, in this case we'll use the astro:page-load  
+  -->
+<script>
+  interface favoritePokemon {
+    name: string;
+    id: number;
+  }
+
+  const handlePageLoad = () => {
+    // In this line of code, we are getting the favoritesPokemons array from the localStorage.
+    // If the array does not exist, it will return an empty array.
+    // The ?? operator is called the "nullish coalescing operator" it returns the first operand if it is not null or undefined,
+    // and the second operand if it is null or undefined.
+    // The JSON.parse() method parses a JSON string, constructing the JavaScript value or object described by the string.
+    // The localStorage.getItem() method is used to get the data from the localStorage, and the data is stored as a string.
+    // The "favorites" key is the name of the key that we are using to store the data in the localStorage.
+    // The "favoritesPokemons" variable is an array of objects, where each object has a name and an id.
+    let favoritesPokemons: favoritePokemon[] = JSON.parse(
+      localStorage.getItem("favorites") ?? "[]",
+    );
+
+    const likeButton = document.querySelector(
+      "#like-button",
+    ) as HTMLButtonElement;
+
+    if (!likeButton) return;
+
+    const name = likeButton.dataset.name ?? "";
+    const id = likeButton.dataset.id ?? "";
+    const isFavorite = favoritesPokemons.some((fav) => fav.name === name);
+
+    const heartFull = likeButton.querySelector("[data-full]") as HTMLElement;
+    const heartOutline = likeButton.querySelector(
+      "[data-outline]",
+    ) as HTMLElement;
+
+    //** if the pokemon is already in favorites, we'll show the heartFull icon and hide the heartOutline icon.
+    //** if the pokemon is not in favorites, we'll show the heartOutline icon and hide the heartFull icon.
+    if (isFavorite) {
+      heartOutline.classList.add("hidden");
+      heartFull.classList.remove("hidden");
+    }
+
+    const toggleFavorite = () => {
+      const isFavorite = favoritesPokemons.some((fav) => fav.name === name);
+
+      if (isFavorite) {
+        // remove from favorites
+        favoritesPokemons = favoritesPokemons.filter(
+          (fav) => fav.name !== name,
+        );
+      } else {
+        // add to favorites
+        favoritesPokemons.push({ name, id: parseInt(id) });
+      }
+
+      localStorage.setItem("favorites", JSON.stringify(favoritesPokemons));
+    };
+
+    // when the like button is clicked, we'll toggle the hidden class on both of the heart icons.
+    // That means if the heartOutline is visible, when the button is clicked it will hide the heartOutline and show the heartFull.
+    // And vice versa, if the heartFull is visible, when the button is clicked it will hide the heartFull and show the heartOutline.
+    likeButton.addEventListener("click", () => {
+      heartOutline.classList.toggle("hidden");
+      heartFull.classList.toggle("hidden");
+
+      toggleFavorite();
+    });
+  };
+
+  document.addEventListener("astro:page-load", handlePageLoad);
+</script>

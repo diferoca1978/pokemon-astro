@@ -1,8 +1,9 @@
 ---
-import { ViewTransitions } from "astro:transitions";
-import Navbar from "@/components/Navbar.astro";
-import Footernav from "@/components/Footernav.astro";
+import { ClientRouter } from "astro:transitions";
+
 import { siteInfo } from "@/const/site-info";
+import Navbar from "@/shared/Navbar.astro";
+import Footernav from "@/shared/Footernav.astro";
 
 interface Props {
   title?: string;
@@ -10,7 +11,11 @@ interface Props {
   image?: string;
 }
 
-const { title= siteInfo.title, description = siteInfo.description, image } = Astro.props;
+const {
+  title = siteInfo.title,
+  description = siteInfo.description,
+  image,
+} = Astro.props;
 ---
 
 <html lang="en">
@@ -24,21 +29,20 @@ const { title= siteInfo.title, description = siteInfo.description, image } = Ast
     <!-- SEO -->
     <meta name="description" content={description} />
     <meta name="author" content="Diego Rodriguez" />
-    
+
     <!-- Open Graph Tags -->
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
 
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body class="bg-slate-800">
-    <Navbar/>
-      <main class="p-10">
-        <slot/>
-      </main>
+    <Navbar />
+    <main class="p-10">
+      <slot />
+    </main>
     <Footernav />
   </body>
 </html>
-
