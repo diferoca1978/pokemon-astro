@@ -88,10 +88,7 @@ const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
      document.addEventListener() function and use an astro special events, in this case we'll use the astro:page-load  
   -->
 <script>
-  interface favoritePokemon {
-    name: string;
-    id: number;
-  }
+  import type { FavoritePokemon } from "@/interfaces/favorite-pokemos";
 
   const handlePageLoad = () => {
     // In this line of code, we are getting the favoritesPokemons array from the localStorage.
@@ -102,7 +99,7 @@ const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
     // The localStorage.getItem() method is used to get the data from the localStorage, and the data is stored as a string.
     // The "favorites" key is the name of the key that we are using to store the data in the localStorage.
     // The "favoritesPokemons" variable is an array of objects, where each object has a name and an id.
-    let favoritesPokemons: favoritePokemon[] = JSON.parse(
+    let favoritesPokemons: FavoritePokemon[] = JSON.parse(
       localStorage.getItem("favorites") ?? "[]",
     );
 

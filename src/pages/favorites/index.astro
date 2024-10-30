@@ -1,0 +1,30 @@
+---
+import { Counter } from "@/components/Counter";
+import { FavoritePokemos } from "@/components/pokemons/FavoritePokemos";
+import MainLayout from "@/layouts/MainLayout.astro";
+import Title from "@/shared/Title.astro";
+---
+
+<MainLayout title="Favorites">
+  <Title>Favorites</Title>
+  <!-- <Counter
+    client:load
+    transition:persist="counterVal"
+    transitions:persists-props
+    initValue={15}
+  /> -->
+
+  <!-- Summary
+  
+    1. Transition:persist="counterVal" is used to persist the counter value on the client side.
+  
+    2. Transitions:persists-props is used to persist the value of the counter through the differents islands that use the same counter component.
+  
+  -->
+  <FavoritePokemos client:only="solid-js" />
+  <!-- Summary
+  
+    1. before using the client:only="solid-js" directive we had an error because in the FavoritePokemos component we try the access to the local storage but it only exists no the backend.
+
+    2. To solve this we can use the client:only="solid-js" directive wich we tell that the client only will be generated to the browser -->
+</MainLayout>

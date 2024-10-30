@@ -1,0 +1,36 @@
+---
+import { Counter } from "@/components/Counter";
+import MainLayout from "@/layouts/MainLayout.astro";
+import Title from "@/shared/Title.astro";
+
+const counterValue = 10;
+---
+
+<MainLayout title="Islands">
+  <Title>Islands</Title>
+
+  <div
+    style={{
+      height: "800px",
+      backgroundColor: "red",
+      opacity: 0.5,
+    }}
+  >
+  </div>
+  <!-- Through this client directive the UI component only is rendered on the client when it is visible -->
+  <Counter
+    client:visible
+    transition:persist="counterVal"
+    transitions:persists-props
+    initValue={counterValue}
+  />
+</MainLayout>
+
+<!-- Summary 
+  1. Here we pass the counterValue generated on the server side to the (UI) component or island.
+  See the <Counter /> component for more details.
+  
+  2. Transition:persist="counterVal" is used to persist the counter value on the client side.
+
+  3. Transitions:persists-props is used to persist the value of the counter through the differents islands that use the same counter component.
+-->
